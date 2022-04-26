@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <string.h>
+
+struct Student
+{
+	int ID;
+	int age;
+	char Name[100];
+};
+
+void printStudent(struct Student student)
+{
+
+	printf("ID:%d\n",student.ID);
+
+	printf("age:%d\n",student.age);
+
+	printf("Name:%s\n",student.Name);
+};
+
+
+int main()
+{
+	struct Student student;
+	
+	student.ID=20220210;
+	student.age=18;
+	strcpy(student.Name,"王同学");
+   void	printStudent(struct Student student);
+	printStudent(student);
+   return 0;
+}
