@@ -1,32 +1,83 @@
 #include <stdio.h>
 #include <string.h>
-
 struct Student
 {
 	int ID;
 	int age;
-	char Name[100];
+	char name[100];
+	struct Student* next;
 };
 
-void printStudent(struct Student student)
+void printfStudent(struct Student* curP)
 {
+	printf("学号：%d  年龄：%d  姓名:%s\n",curP->ID ,curP->age,curP->name);
+}
 
-	printf("ID:%d\n",student.ID);
-
-	printf("age:%d\n",student.age);
-
-	printf("Name:%s\n",student.Name);
-};
+void printflinkedList(struct Student* headP)
+{
+	while(headP!=NULL)
+	{
+		printfStudent(headP);
+		headP=headP->next;
+	}
+}
 
 
 int main()
-{
-	struct Student student;
+{ 
+	Student s1,s2,s3,s4;
 	
-	student.ID=20220210;
-	student.age=18;
-	strcpy(student.Name,"王同学");
-   void	printStudent(struct Student student);
-	printStudent(student);
-   return 0;
+	s1.ID=01;
+	s1.age=18;
+	strcpy(s1.name,"王同学");
+	
+	s2.ID=02;
+	s2.age=18;
+	strcpy(s2.name,"还同学");
+	
+	s3.ID=03;
+	s3.age=18;
+	strcpy(s3.name,"一同学");
+	
+	s4.ID=04;
+	s4.age=18;
+	strcpy(s4.name,"小同学");
+	
+	
+	s1.next =&s2;
+	s2.next =&s3;
+	s3.next =&s4;
+	s4.next =NULL;
+	
+	struct Student* curP=&s1;
+        printflinkedList(curP);
+	printf("请输入你想要查询学生的学号:");
+	int id;
+	scanf("%d",&id);
+	curP=&s1;
+	
+	int flag=0;
+	while (curP!=NULL)
+	{
+		if(curP->ID==id)
+		{
+			printfStudent(curP);
+			flag=1;
+			break;
+		}
+		else 
+			curP=curP->next ;
+	}
+	if(flag=0)
+	{
+		printf(",对不起，该学生找不到\n");
+	}
+	printf("接下来要删除s2\n");
+	s1.next =&s3;
+	s2.next =NULL;
+	
+	curP=&s1;
+	printflinkedList(curP);
+	
+	return 0;
 }
