@@ -45,7 +45,24 @@ void updatePassword()
 	printf("密码错误，不能修改！\n");
 	}
 }
+void updatepassword()
+{
+	char oldpassword[100]={'\0'};
+	printf("Please enter your old password
 
+：\n");
+	scanf("%s",oldpassword);
+	if(strcmp(oldpassword,curAccount->password)==0)
+	{	
+		printf("Please enter a new password：\n");
+		scanf("%s",curAccount->password);
+printf("修改成功！\n");
+	}
+	else
+	{
+	printf("Password error, cannot be changed!\n");
+	}
+}
 void drawMoney()
 {
 	int money;
@@ -86,7 +103,46 @@ void drawMoney()
 	}
 	
 }
+void drawmoney()
+{
+	int money;
+	printf("Please enter the withdrawal amount：");
+	scanf("%d",&money);
+	
+	//从账户里面扣钱 
+	if(money> curAccount->money)
+	{
+		printf("Lack of balance！\n");
+	}
+	else
+	{
+		//记录交易记录 创建结点，赋值初始化，添加结点到链表
+		TR * newNode=(TR*)malloc(sizeof(TR));
 
+		curAccount->money-=money ;
+		printf("Withdrawals success！\n");
+		
+		
+		
+		newNode->next=NULL;
+		strcpy(newNode->username,curAccount->username);
+		newNode->type=0;
+		newNode->amount=money;
+		newNode->timestamp=time(NULL);
+		
+		if(trHead==NULL)
+		{
+			trHead=newNode;
+			trTail=newNode; 
+		}
+		else
+		{
+			trTail->next=newNode;
+			trTail=newNode;
+		}
+	}
+	
+}
 void saveMoney()
 {
 	printf("请输入存款金额");
@@ -94,6 +150,14 @@ void saveMoney()
 	scanf("%d",&money);
 	curAccount->money  += money;
 	printf("存款成功！\n");
+}
+void savemoney()
+{
+	printf("Please enter the deposit amount:");
+	int money;
+	scanf("%d",&money);
+	curAccount->money  += money;
+	printf("Deposit successfully！\n");
 }
 int findOtherAccount(char otherUsername[])
 {
@@ -192,6 +256,89 @@ void transfer()
 		printf("账户错误！\n");
 	}
 }
+void Tansfer()
+{
+	char otherUsername[100];
+	
+	//输入对方账户
+	printf("Please enter your account：");
+	
+	scanf("%s",otherUsername);
+	
+	//验证账号的合法性
+	if(findOtherAccount(otherUsername))
+	{
+		int money;
+		
+		//输入转账金额
+		printf("Please enter the transfer amount：");
+		
+		scanf("%d",&money);
+		
+		//验证金额合法性
+		if(curAccount->money>=money)
+		{
+			//记录转账记录：转出(创建交易记录结点，初始化，添加到链表)
+			TR * newNodeOut=(TR*)malloc(sizeof(TR));
+			
+			//转账（原账户的钱减少，对方账户的钱增多）
+			curAccount->money-=money;
+			otherAccount->money+=money;
+			
+			//输出提示转账成功
+			printf("Interbank Transfer Correction unsuccessful！\n");
+			
+			
+			
+			
+			newNodeOut->next=NULL;
+			strcpy(newNodeOut->username,curAccount->username);
+			newNodeOut->type=2;
+			newNodeOut->amount=money;
+			newNodeOut->timestamp=time(NULL);
+			
+			if(trHead==NULL)
+			{
+				trHead=newNodeOut;
+				trTail=newNodeOut; 
+			}
+			else
+			{
+				trTail->next=newNodeOut;
+				trTail=newNodeOut;
+			}
+			
+			
+			//记录转账记录：转入
+			TR * newNodeIn=(TR*)malloc(sizeof(TR));
+			
+			newNodeIn->next=NULL;
+			strcpy(newNodeIn->username,curAccount->username);
+			newNodeIn->type=3;
+			newNodeIn->amount=money;
+			newNodeIn->timestamp=time(NULL);
+			
+			if(trHead==NULL)
+			{
+				trHead=newNodeIn;
+				trTail=newNodeIn; 
+			}
+			else
+			{
+				trTail->next=newNodeIn;
+				trTail=newNodeIn;
+			}
+		}
+		else
+		{
+			printf("not sufficient funds!\n");
+		}
+	}
+	else
+	{
+		printf("Account error！\n");
+	}
+}
 void homePage()
 {
 	system("cls");
@@ -214,7 +361,27 @@ void homePage()
 		printf("********************\n");
 	}
 }
-
+void homepage()
+{
+	system("cls");
+	while(1)
+	{
+		int a;
+		printf("To exit, press 0; To change the password, press 1. To withdraw money, press 2; To deposit money, press 3. For transfer, press 4\n");
+		scanf("%d",&a);
+		if(a==1)
+			updatepassword(); 
+		else if(a==2)
+			drawmoney();
+		else if(a==3)
+			savemoney();
+		else if(a==4)
+			Tansfer();
+		else if(a==0)
+			break;
+		printf("********************\n");
+	}
+}
 
 void printAccount(Account a)
 {
@@ -269,6 +436,20 @@ void saveData()
 		fclose(fp);
 	}
 }
+void savedata()
+{
+	FILE* fp=fopen("D:/file.txt","w");
+	if(fp!=NULL)
+	{
+		Account * curP=head;
+		while(curP!=NULL)
+		{
+			fprintf(fp,"%s\t%s\t%f\n",curP->username,curP->password,curP->money );
+			curP=curP->next;
+		}
+		fclose(fp);
+	}
+
 void printLinkedList()
 {
 	Account * curP=head;
@@ -320,6 +501,25 @@ void signIn()
 		printf("登录失败！\n");
 	}
 }
+void signin()
+{
+	Account a;
+	printf("Please enter your account number：");
+	scanf("%s",a.username);
+	
+	printf("Please enter your password：");
+	scanf("%s",a.password);
+	
+	if(findAccount(a)==1)
+	{
+		printf("login successfully\n");
+		homepage();
+	}
+	else
+	{
+		printf("login failure\n");
+	}
+}
 void signUp()
 {
 	Account a;
@@ -327,6 +527,17 @@ void signUp()
 	printf("请输入卡号：\n");
 	scanf("%s",a.username );
 	printf("请输入密码：\n");
+	scanf("%s",a.password );
+	a.money =0.00f;
+	fclose(fp)；；
+}
+void signup()
+{
+	Account a;
+	FILE* fp=fopen("D:/atm.txt","a+");
+	printf("Please enter the card number：\n");
+	scanf("%s",a.username );
+	printf("Please enter your password：\n");
 	scanf("%s",a.password );
 	a.money =0.00f;
 	fclose(fp);
@@ -359,7 +570,33 @@ void showChinese()
 		printf("********************\n");
 	}
 }
-
+void showEnglish()
+{
+	while(1)
+	{	
+		printf("Enter 0 to exit\n")	;
+		printf("Enter 1 to create an account\n");
+		printf("Enter 2 to log in\n");
+		int c;
+		scanf("%d",&c);	
+		if(c==1)
+		{
+			signup();
+			printf("Creating a successful\n");
+		}
+		else if(c==2)
+		{
+			signin();
+		}
+		else if(c==0)
+		{
+			printf("Exit the success\n");
+			break;
+		}
+		printf("********************\n");
+		printf("********************\n");
+	}
+}
 
 int main()
 {
